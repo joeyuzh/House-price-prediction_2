@@ -1,3 +1,7 @@
+#Hello Github
+
+print 'Hello Github'
+
 path = "D:\/backup\Python assignment\House Prices Advanced Regression Techniques\/train.csv"
 
 path_test = "D:\/backup\Python assignment\House Prices Advanced Regression Techniques\/test.csv"
