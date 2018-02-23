@@ -12,6 +12,16 @@ from sklearn import linear_model
 
 from sklearn.linear_model import LogisticRegression
 
+from sklearn.linear_model import LinearRegression
+
+from sklearn.linear_model import Ridge
+
+from sklearn.linear_model import Lasso
+
+from sklearn.linear_model import ElasticNet, SGDRegressor, BayesianRidge
+
+from sklearn.svm import SVR, LinearSVR
+
 import seaborn as sns
 
 from scipy.stats import norm
@@ -71,3 +81,134 @@ print len(y_test_predict)
 
 y_test_predict.to_csv('Prediction result.csv')
 
+
+
+'''
+
+
+# Feature Importance
+from sklearn import datasets
+from sklearn import metrics
+from sklearn.ensemble import ExtraTreesClassifier
+from sklearn import preprocessing 
+
+
+drop_list = [] #This is to remove the columns that have too many missing values in train set
+
+for i, j in enumerate(train_data.count()):
+
+	if j < 800:
+
+		drop_list.append(i)
+
+new_train_data = train_data.drop(train_data.columns[drop_list],axis=1)
+
+Target_SalePrice  = new_train_data['SalePrice']
+
+new_train_data = new_train_data.drop(['SalePrice'], axis=1)
+
+new_train_data = pd.get_dummies(new_train_data) # convert the string to binary coding
+
+
+drop_test_list = [] #This is to remove the columns that have too many missing values in test set
+
+for i, j in enumerate(test_data.count()): 
+
+	if j < 800:
+
+		drop_test_list.append(i)
+
+new_test_data = test_data.drop(test_data.columns[drop_test_list],axis=1)
+
+new_test_data = pd.get_dummies(new_test_data) # convert the string to binary coding
+
+#new_test_data.to_csv('processed_data_house price_2.csv')
+
+
+train_string_list = list(new_train_data.columns.values) #get the column names of trian and test table
+
+test_string_list = list(new_test_data.columns.values)
+
+
+extra_column = list(set(train_string_list) - set(test_string_list))
+
+extra = pd.DataFrame(np.zeros((1459, 16)), columns = (extra_column))
+
+new_test_data = pd.concat([new_test_data, extra], axis=1) #Finalize the test data
+
+
+print new_train_data.shape
+
+print new_test_data.shape
+
+
+
+new_train_data['SaleCondition_Partial'] = new_train_data['SaleCondition_Partial'].fillna(3)
+
+#processed_data.replace('', 0.05)
+
+#processed_data.applymap(lambda x: 0.05 if x == np.nan else x)
+
+new_train_data = new_train_data.astype(float)
+new_test_data = new_test_data.astype(float)
+
+
+new_train_data2 = new_train_data.where(pd.notnull(new_train_data), 0.05)
+new_test_data2 = new_test_data.where(pd.notnull(new_test_data), 0.05)
+
+
+Target_SalePrice = Target_SalePrice.astype(float)
+
+#sns.distplot(Target_SalePrice)
+
+# corr_varialbe = raw_data.corr()
+
+# f, ax = plt.subplots(figsize = (12, 9))
+
+# sns.heatmap(corr_varialbe, vmax = 0.8, square = True)
+
+# plt.show()
+
+# #print corr_varialbe
+
+# print type(corr_varialbe)
+
+# corr_varialbe_10 = corr_varialbe.nlargest(10, 'SalePrice')['SalePrice']
+
+# print corr_varialbe_10
+
+# cols = corr_varialbe.nlargest(10, 'SalePrice')['SalePrice'].index
+
+# print cols
+
+# cm = np.corrcoef(raw_data[cols].values.T)
+
+# #sns.set(font_scale=1.25)
+
+# #sns.heatmap(cm, vmax = 0.8, square = True)
+
+# #plt.show()
+
+# print raw_data.isnull().sum().sort_values(ascending=False).head(15)
+
+# print raw_data.isnull().count().sort_values(ascending=False).head(50)
+
+model.fit(new_train_data2, Target_SalePrice)
+
+y_test_predict = model.predict(new_test_data2)
+
+print len(y_test_predict)
+
+#y_test_predict.savetxt('Prediction result.csv', index=False, sep=',')
+np.savetxt('Prediction result.csv', y_test_predict, delimiter = ',')
+
+# sns.distplot(Target_SalePrice, fit = norm)
+
+# plt.show()
+
+# res = stats.probplot(Target_SalePrice, plot =plt)
+
+# plt.show()
+
+
+'''
