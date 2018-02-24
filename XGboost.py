@@ -42,29 +42,29 @@ model = Lasso(alpha = 50, tol = 1e-6)
 Target_SalePrice = train_data['SalePrice']
 
 
-corr_varialbe = train_data.corr()
+
+
+corr_varialbe = train_data.corr() #Find out the top 10 most correlated variables to 'SalePrice'. Use these variables to build the model
 
 corr_varialbe_10 = corr_varialbe.nlargest(11, 'SalePrice')['SalePrice']
 
-#print corr_varialbe_10
-
 high_corr_variable_name = corr_varialbe_10.index.astype(basestring)
 
+print high_corr_variable_name
 
 
-#print type(high_corr_variable_name)
-
-
-high_corr_variable = train_data[high_corr_variable_name]
+high_corr_variable = train_data[high_corr_variable_name] #choose the top 10 most correlated variables columns as training set
 
 high_corr_variable = high_corr_variable.drop('SalePrice', axis = 1)
 
-test_data = test_data[high_corr_variable_name[1:]]
+test_data = test_data[high_corr_variable_name[1:]] #Choose the corresponding columns in the test set
 
 #test_data = test_data[test_data['GarageCars'].notnull() & test_data['TotalBsmtSF'].notnull()]
 
-test_data = test_data.fillna(0.1)
+test_data = test_data.fillna(0.1) #fill the Na data
 
+
+#split the training set into two parts. One part is for training and the other is for validation
 high_corr_variable_train_x, high_corr_variable_test_x, high_corr_variable_train_y, high_corr_variable_test_y = train_test_split(high_corr_variable,Target_SalePrice, test_size = 0.2, random_state=7 ) 
 
 print high_corr_variable_train_x.shape
@@ -76,20 +76,13 @@ print high_corr_variable_train_y.shape
 print high_corr_variable_test_y.shape
 
 
-
-# print high_corr_variable.info()
-
-# print test_data.info()
-
-# print test_data.shape
-
-# print test_data.isnull().sum()
+# The following codes illustrate the use of KFold
 
 # ntrain = high_corr_variable.shape[0]
 
 # ntest = test_data.shape[0]
 
-# kf = KFold(ntrain, n_folds = 5, random_state = 0)
+# kf = KFold(ntrain, n_folds = 5, random_state = 0) 
 
 # print kf
 
@@ -100,9 +93,10 @@ print high_corr_variable_test_y.shape
 # 	print len(train_index) + len(test_index)
 
 
-class SklearnExtension(object):
 
-	def __init__(self, clf, params=None):
+class SklearnExtension(object): #This makes it more handy to fit model
+
+	def __init__(self, clf, *args):
 
 		#params['random_state'] = seed
 
@@ -139,6 +133,7 @@ la = SklearnExtension(clf = Lasso)
 
 
 #build the model with splitted data in the training set
+
 lg.train(high_corr_variable_train_x, high_corr_variable_train_y)
 
 lr.train(high_corr_variable_train_x, high_corr_variable_train_y)
