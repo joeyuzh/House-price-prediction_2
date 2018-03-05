@@ -194,6 +194,20 @@ gbm = xgb.XGBClassifier(
 
 
 
-predictions = pd.DataFrame(gbm.predict(Xgboost_test_x))
+# predictions = pd.DataFrame(gbm.predict(Xgboost_test_x))
 
-predictions.to_csv('Prediction result.csv')
+# predictions.to_csv('Prediction result.csv')
+
+
+
+#This section is using joblib to save the trained model for future use
+
+finalized_model_joblib = 'finalized_model_joblib.sav'
+
+joblib.dump(gbm, finalized_model_joblib)
+
+loaded_model_from_joblib = joblib.load(finalized_model_joblib)
+
+predictions_joblib = pd.DataFrame(loaded_model_from_joblib.predict(Xgboost_test_x))
+
+predictions_joblib.to_csv('Prediction result_from joblib.csv')
